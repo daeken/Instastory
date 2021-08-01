@@ -13,14 +13,14 @@ cvs.width = cvs.height = imageSize;
 const ctx = cvs.getContext('2d');
 ctx.fillStyle = 'black';
 
-function setFont(bold, italic) {
+const setFont = (bold, italic) => {
 	var props = italic ? 'italic ' : 'normal ';
 	props += 'normal ';
 	props += bold ? 'bold ' : '300 ';
 	ctx.font = props + fontSize.toString() + 'px ' + font;
 }
 
-function parseText(text) {
+const parseText = (text) => {
 	var bold = false, italic = false;
 	var content = [[false, false, '']];
 
@@ -39,11 +39,11 @@ function parseText(text) {
 	return content.filter(x => x[2].length != 0);
 }
 
-function parseAll(text) {
+const parseAll = (text) => {
 	return text.split('\n').map(parseText).filter(x => x.length != 0);
 }
 
-function lineify(content) {
+const lineify = (content) => {
 	var lines = [];
 	var currentLine = [];
 	var currentWidth = 0;
@@ -65,33 +65,36 @@ function lineify(content) {
 	return lines;
 }
 
-function calcHeight(lines) {
+const calcHeight = (lines) => {
 	return lines.length * (fontSize + lineSpacing) - lineSpacing;
 }
 
-function clear() {
+const clear = () => {
 	ctx.fillStyle = 'white';
 	ctx.fillRect(0, 0, cvs.width, cvs.height);
 	ctx.fillStyle = 'black';
 }
 
-$(document).ready(function() {
-	$('body').on('input propertychange', '#text', function() {
+$(document).ready(() => {
+	$('body').on('input propertychange', '#text', () => {
 		var paras = parseAll($('#text').val()).map(lineify);
 		$('#images').empty();
 		var icount = 0;
 
 		var height = 0;
 		clear();
-		function flush() {
+		const flush = () => {
 			icount++;
 			var img = new Image();
 			img.src = cvs.toDataURL('image/png');
-			img.style.border = '1px solid red';
-			$('#images').append(img);
+			img.style.border = '1px solid #ffc0cb';
+			img.style.boxShadow = 'rgba(0, 0, 0, 0.5) 0px 5px 15px';
+			img.style.width = '100%';
 			var a = $('<a download="story' + icount + '.png">Save</a>');
-			a[0].href = img.src;
 			$('#images').append(a);
+			$('#images').append('<br>');
+			$('#images').append(img);
+			a[0].href = img.src;
 			$('#images').append('<br>');
 			$('#imagecount').text(icount);
 		}
